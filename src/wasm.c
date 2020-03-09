@@ -10,4 +10,14 @@
  */
 #include "vim.h"
 
+#if defined(WASM) || defined(PROTO)
+
 #include "wasm3/source/wasm3.h"
+
+void
+f_wasmeval(typval_T *argvars, typval_T *rettv)
+{
+    return;
+}
+
+#endif

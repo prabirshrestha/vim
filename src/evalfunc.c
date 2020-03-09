@@ -932,6 +932,9 @@ static funcentry_T global_functions[] =
     {"values",		1, 1, FEARG_1,	  ret_list_any,	f_values},
     {"virtcol",		1, 1, FEARG_1,	  ret_number,	f_virtcol},
     {"visualmode",	0, 1, 0,	  ret_string,	f_visualmode},
+#ifdef WASM
+    {"wasmeval",	0, 0, 0,	  ret_number,	f_wasmeval},
+#endif
     {"wildmenumode",	0, 0, 0,	  ret_number,	f_wildmenumode},
     {"win_execute",	2, 3, FEARG_2,	  ret_string,	f_win_execute},
     {"win_findbuf",	1, 1, FEARG_1,	  ret_list_number, f_win_findbuf},
