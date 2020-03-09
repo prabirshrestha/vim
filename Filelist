@@ -370,6 +370,42 @@ SRC_ALL =	\
 		src/xdiff/xtypes.h \
 		src/xdiff/xutils.c \
 		src/xdiff/xutils.h \
+		src/wasm3/LICENSE \
+		src/wasm3/README.md \
+		src/wasm3/source/m3.h \
+		src/wasm3/source/m3_api_defs.h \
+		src/wasm3/source/m3_api_libc.c \
+		src/wasm3/source/m3_api_libc.h \
+		src/wasm3/source/m3_api_meta_wasi.c \
+		src/wasm3/source/m3_api_tracer.c \
+		src/wasm3/source/m3_api_tracer.h \
+		src/wasm3/source/m3_api_wasi.c \
+		src/wasm3/source/m3_api_wasi.h \
+		src/wasm3/source/m3_bind.c \
+		src/wasm3/source/m3_bind.h \
+		src/wasm3/source/m3_code.c \
+		src/wasm3/source/m3_code.h \
+		src/wasm3/source/m3_compile.c \
+		src/wasm3/source/m3_compile.h \
+		src/wasm3/source/m3_config.h \
+		src/wasm3/source/m3_config_platforms.h \
+		src/wasm3/source/m3_core.c \
+		src/wasm3/source/m3_core.h \
+		src/wasm3/source/m3_emit.c \
+		src/wasm3/source/m3_emit.h \
+		src/wasm3/source/m3_env.c \
+		src/wasm3/source/m3_env.h \
+		src/wasm3/source/m3_exception.h \
+		src/wasm3/source/m3_exec.c \
+		src/wasm3/source/m3_exec.h \
+		src/wasm3/source/m3_exec_defs.h \
+		src/wasm3/source/m3_info.c \
+		src/wasm3/source/m3_info.h \
+		src/wasm3/source/m3_math_utils.h \
+		src/wasm3/source/m3_module.c \
+		src/wasm3/source/m3_optimize.c \
+		src/wasm3/source/m3_parse.c \
+		src/wasm3/source/wasm3.h \
 
 
 # source files for Unix only

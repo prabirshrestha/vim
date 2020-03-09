@@ -1440,6 +1440,61 @@ XDIFF_INCL = \
 	xdiff/xtypes.h \
 	xdiff/xutils.h \
 
+WASM_SRC = \
+	objects/m3_api_libc.c \
+	objects/m3_api_meta_wasi.c \
+	objects/m3_api_tracer.c \
+	objects/m3_api_wasi.c \
+	objects/m3_bind.c \
+	objects/m3_code.c \
+	objects/m3_compile.c \
+	objects/m3_core.c \
+	objects/m3_emit.c \
+	objects/m3_env.c \
+	objects/m3_exec.c \
+	objects/m3_info.c \
+	objects/m3_module.c \
+	objects/m3_optimize.c \
+	objects/m3_parse.c \
+
+WASM_INCL = \
+	wasm3/source/m3.h \
+	wasm3/source/m3_api_defs.h \
+	wasm3/source/m3_api_libc.h \
+	wasm3/source/m3_api_tracer.h \
+	wasm3/source/m3_api_wasi.h \
+	wasm3/source/m3_bind.h \
+	wasm3/source/m3_code.h \
+	wasm3/source/m3_compile.h \
+	wasm3/source/m3_config.h \
+	wasm3/source/m3_config_platforms.h \
+	wasm3/source/m3_core.h \
+	wasm3/source/m3_emit.h \
+	wasm3/source/m3_env.h \
+	wasm3/source/m3_exception.h \
+	wasm3/source/m3_exec.h \
+	wasm3/source/m3_exec_defs.h \
+	wasm3/source/m3_info.h \
+	wasm3/source/m3_math_utils.h \
+	wasm3/source/wasm3.h \
+
+WASM_OBJS = \
+	objects/m3_api_libc.o \
+	objects/m3_api_meta_wasi.o \
+	objects/m3_api_tracer.o \
+	objects/m3_api_wasi.o \
+	objects/m3_bind.o \
+	objects/m3_code.o \
+	objects/m3_compile.o \
+	objects/m3_core.o \
+	objects/m3_emit.o \
+	objects/m3_env.o \
+	objects/m3_exec.o \
+	objects/m3_info.o \
+	objects/m3_module.o \
+	objects/m3_optimize.o \
+	objects/m3_parse.o \
+
 ### Command to create dependencies based on #include "..."
 ### prototype headers are ignored due to -DPROTO, system
 ### headers #include <...> are ignored if we use the -MM option, as
@@ -1693,6 +1748,7 @@ SRC =	$(BASIC_SRC) \
 	$(GUI_SRC) \
 	$(TERM_SRC) \
 	$(XDIFF_SRC) \
+	$(WASM_SRC) \
 	$(LUA_SRC) \
 	$(MZSCHEME_SRC) \
 	$(PERL_SRC) \
@@ -1721,7 +1777,7 @@ RUN_UNITTESTS = run_json_test run_kword_test run_memfile_test run_message_test
 
 # All sources, also the ones that are not configured
 ALL_LOCAL_SRC = $(BASIC_SRC) $(ALL_GUI_SRC) $(UNITTEST_SRC) $(EXTRA_SRC)
-ALL_SRC = $(ALL_LOCAL_SRC) $(TERM_SRC) $(XDIFF_SRC)
+ALL_SRC = $(ALL_LOCAL_SRC) $(TERM_SRC) $(XDIFF_SRC) $(WASM_SRC)
 
 # Which files to check with lint.  Select one of these three lines.  ALL_SRC
 # checks more, but may not work well for checking a GUI that wasn't configured.
@@ -1839,7 +1895,8 @@ OBJ_COMMON = \
 	$(OS_EXTRA_OBJ) \
 	$(NETBEANS_OBJ) \
 	$(CHANNEL_OBJ) \
-	$(XDIFF_OBJS)
+	$(XDIFF_OBJS) \
+	$(WASM_OBJS) \
 
 # The files included by tests are not in OBJ_COMMON.
 OBJ_MAIN = \
@@ -3550,6 +3607,52 @@ objects/xhistogram.o: xdiff/xhistogram.c $(XDIFF_INCL)
 objects/xpatience.o: xdiff/xpatience.c $(XDIFF_INCL)
 	$(CCCDIFF) -o $@ xdiff/xpatience.c
 
+CCCWASM = $(CCC_NF) $(ALL_CFLAGS)
+
+objects/m3_api_libc.o: wasm3/source/m3_api_libc.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_api_libc.c
+
+objects/m3_api_meta_wasi.o: wasm3/source/m3_api_meta_wasi.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_api_meta_wasi.c
+
+objects/m3_api_tracer.o: wasm3/source/m3_api_tracer.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_api_tracer.c
+
+objects/m3_api_wasi.o: wasm3/source/m3_api_wasi.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_api_wasi.c
+
+objects/m3_bind.o: wasm3/source/m3_bind.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_bind.c
+
+objects/m3_code.o: wasm3/source/m3_code.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_code.c
+
+objects/m3_compile.o: wasm3/source/m3_compile.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_compile.c
+
+objects/m3_core.o: wasm3/source/m3_core.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_core.c
+
+objects/m3_emit.o: wasm3/source/m3_emit.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_emit.c
+
+objects/m3_env.o: wasm3/source/m3_env.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_env.c
+
+objects/m3_exec.o: wasm3/source/m3_exec.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_exec.c
+
+objects/m3_info.o: wasm3/source/m3_info.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_info.c
+
+objects/m3_module.o: wasm3/source/m3_module.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_module.c
+
+objects/m3_optimize.o: wasm3/source/m3_optimize.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_optimize.c
+
+objects/m3_parse.o: wasm3/source/m3_parse.c $(WASM_INCL)
+	$(CCCWASM) -o $@ wasm3/source/m3_parse.c
 
 ###############################################################################
 ### MacOS X installation
