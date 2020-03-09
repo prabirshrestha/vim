@@ -336,6 +336,9 @@
 /* Define for linking via dlopen() or LoadLibrary() */
 #undef DYNAMIC_LUA
 
+/* Define if you want to include the WASM interpreter. */
+#define WASM
+
 /* Define if you want to include the MzScheme interpreter. */
 #undef FEAT_MZSCHEME
 

@@ -3483,6 +3483,9 @@ f_has(typval_T *argvars, typval_T *rettv)
 #ifdef FEAT_DIFF
 	"diff",
 #endif
+#ifdef WASM
+	"wasm",
+#endif
 #ifdef FEAT_DIGRAPHS
 	"digraphs",
 #endif

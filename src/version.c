@@ -666,6 +666,11 @@ static char *(features[]) =
 	"-vtp",
 # endif
 #endif
+#ifdef WASM
+	"+wasm",
+#else
+	"-wasm",
+#endif
 #ifdef FEAT_WILDIGN
 	"+wildignore",
 #else

@@ -370,6 +370,7 @@ SRC_ALL =	\
 		src/xdiff/xtypes.h \
 		src/xdiff/xutils.c \
 		src/xdiff/xutils.h \
+		src/wasm.c \
 		src/wasm3/LICENSE \
 		src/wasm3/README.md \
 		src/wasm3/source/m3.h \

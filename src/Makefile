@@ -1742,6 +1742,7 @@ BASIC_SRC = \
 	viminfo.c \
 	window.c \
 	bufwrite.c \
+	wasm.c \
 	$(OS_EXTRA_SRC)
 
 SRC =	$(BASIC_SRC) \
@@ -3194,6 +3195,9 @@ objects/dict.o: dict.c
 
 objects/diff.o: diff.c $(XDIFF_INCL)
 	$(CCC) -o $@ diff.c
+
+objects/wasm.o: wasm.c $(WASM_INCL)
+	$(CCC) -o $@ wasm.c
 
 objects/digraph.o: digraph.c
 	$(CCC) -o $@ digraph.c
