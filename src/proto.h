@@ -234,6 +234,10 @@ void mbyte_im_set_active(int active_arg);
 # endif
 # include "window.pro"
 
+# ifdef WASM
+#  include "wasm.pro"
+# endif
+
 # ifdef FEAT_LUA
 #  include "if_lua.pro"
 # endif

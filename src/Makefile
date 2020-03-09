@@ -411,6 +411,9 @@ CClink = $(CC)
 # Lua installation dir (when not set uses $LUA_PREFIX or defaults to /usr)
 #CONF_OPT_LUA_PREFIX = --with-lua-prefix=/usr/local
 
+# WASM
+#CONF_OPT_WASM = --enable-wasminterp
+
 # MZSCHEME
 # Uncomment this when you want to include the MzScheme interface.
 # You may have to build racket from source to make this work.
@@ -1441,6 +1444,7 @@ XDIFF_INCL = \
 	xdiff/xutils.h \
 
 WASM_SRC = \
+	objects/wasm.c \
 	objects/m3_api_libc.c \
 	objects/m3_api_meta_wasi.c \
 	objects/m3_api_tracer.c \
@@ -1479,6 +1483,7 @@ WASM_INCL = \
 	wasm3/source/wasm3.h \
 
 WASM_OBJS = \
+	objects/wasm.o \
 	objects/m3_api_libc.o \
 	objects/m3_api_meta_wasi.o \
 	objects/m3_api_tracer.o \
@@ -1742,7 +1747,6 @@ BASIC_SRC = \
 	viminfo.c \
 	window.c \
 	bufwrite.c \
-	wasm.c \
 	$(OS_EXTRA_SRC)
 
 SRC =	$(BASIC_SRC) \
@@ -2055,6 +2059,7 @@ PRO_AUTO = \
 	vim9execute.pro \
 	vim9script.pro \
 	viminfo.pro \
+	wasm.pro \
 	window.pro \
 	$(ALL_GUI_PRO) \
 	$(TCL_PRO)
@@ -2104,6 +2109,7 @@ config auto/config.mk: auto/configure config.mk.in config.h.in
 		$(CONF_ARGS4) $(CONF_ARGS5) $(CONF_ARGS6) \
 		$(CONF_OPT_MZSCHEME) $(CONF_OPT_PLTHOME) \
 		$(CONF_OPT_LUA) $(CONF_OPT_LUA_PREFIX) \
+		$(CONF_OPT_WASM) \
 		$(CONF_OPT_SYSMOUSE) $(CONF_OPT_CANBERRA); \
 	fi
 
@@ -4195,6 +4201,10 @@ objects/bufwrite.o: bufwrite.c vim.h protodef.h auto/config.h feature.h os_unix.
  auto/osdef.h ascii.h keymap.h term.h macros.h option.h beval.h \
  proto/gui_beval.pro structs.h regexp.h gui.h alloc.h ex_cmds.h spell.h \
  proto.h globals.h
+objects/wasm.o: wasm.c vim.h protodef.h auto/config.h feature.h os_unix.h \
+ auto/osdef.h ascii.h keymap.h term.h macros.h option.h beval.h \
+ proto/gui_beval.pro structs.h regexp.h gui.h alloc.h ex_cmds.h spell.h \
+ proto.h globals.h wasm3/source/wasm3.h
 objects/gui.o: gui.c vim.h protodef.h auto/config.h feature.h os_unix.h \
  auto/osdef.h ascii.h keymap.h term.h macros.h option.h beval.h \
  proto/gui_beval.pro structs.h regexp.h gui.h alloc.h ex_cmds.h spell.h \

@@ -285,6 +285,7 @@ SRC_ALL =	\
 		src/proto/vim9execute.pro \
 		src/proto/vim9script.pro \
 		src/proto/viminfo.pro \
+		src/proto/wasm.pro \
 		src/proto/winclip.pro \
 		src/proto/window.pro \
 		src/libvterm/.bzrignore \

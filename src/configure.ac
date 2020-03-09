@@ -540,6 +540,42 @@ else
   AC_MSG_RESULT(yes)
 fi
 
+AC_MSG_CHECKING(--enable-wasminterp argument)
+AC_ARG_ENABLE(wasminterp,
+    [  --enable-wasminterp       Enable wasminterp support.],
+    , [enable_wasminterp="auto"])
+if test "$enable_wasminterp" = "yes" || test "$enable_wasminterp" = "auto" -a "x$features" = "xhuge" ; then
+  if test "x$features" = "xtiny" -o "x$features" = "xsmall"; then
+    AC_MSG_RESULT([cannot use wasminterp emulator with tiny or small features])
+    enable_wasminterp="no"
+  else
+    if test "$enable_wasminterp" = "auto"; then
+      enable_wasminterp="yes"
+      AC_MSG_RESULT(defaulting to yes)
+    else
+      AC_MSG_RESULT(yes)
+    fi
+  fi
+else
+  if test "$enable_wasminterp" = "auto"; then
+    enable_wasminterp="no"
+    AC_MSG_RESULT(defaulting to no)
+  else
+    AC_MSG_RESULT(no)
+  fi
+fi
+if test "$enable_wasminterp" = "yes"; then
+  AC_DEFINE(WASM)
+  WASM_SRC="wasm.c wasm3/source/m3_api_libc.c wasm3/source/m3_api_meta_wasi.c wasm3/source/m3_api_tracer.c wasm3/source/m3_api_wasi.c wasm3/source/m3_bind.c wasm3/source/m3_code.c wasm3/source/m3_compile.c wasm3/source/m3_core.c wasm3/source/m3_emit.c wasm3/source/m3_env.c wasm3/source/m3_exec.c wasm3/source/m3_info.c wasm3/source/m3_module.c wasm3/source/m3_optimize.c wasm3/source/m3_parse.c"
+  AC_SUBST(WASM_SRC)
+  WASM_OBJ="objects/wasm.o objects/m3_api_libc.o objects/m3_api_meta_wasi.o objects/m3_api_tracer.o objects/m3_api_wasi.o objects/m3_bind.o objects/m3_code.o objects/m3_compile.o objects/m3_core.o objects/m3_emit.o objects/m3_env.o objects/m3_exec.o objects/m3_info.o objects/m3_module.o objects/m3_optimize.o objects/m3_parse.o"
+  AC_SUBST(WASM_OBJ)
+  WASM_PRO="wasm.pro"
+  AC_SUBST(WASM_PRO)
+  WASM_TEST="test_wasm"
+  AC_SUBST(WASM_TEST)
+fi
+
 dnl Check for Lua feature.
 AC_MSG_CHECKING(--enable-luainterp argument)
 AC_ARG_ENABLE(luainterp,
