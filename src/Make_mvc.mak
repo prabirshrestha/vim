@@ -503,7 +503,7 @@ WINVER = 0x0501
 #VIMRUNTIMEDIR = somewhere
 
 CFLAGS = -c /W3 /nologo $(CVARS) -I. -Iproto -DHAVE_PATHDEF -DWIN32 \
-		$(CSCOPE_DEFS) $(TERM_DEFS) $(SOUND_DEFS) $(NETBEANS_DEFS) $(CHANNEL_DEFS) \
+		$(CSCOPE_DEFS) $(TERM_DEFS) $(WASM_DEFS) $(SOUND_DEFS) $(NETBEANS_DEFS) $(CHANNEL_DEFS) \
 		$(NBDEBUG_DEFS) $(XPM_DEFS) \
 		$(DEFINES) -DWINVER=$(WINVER) -D_WIN32_WINNT=$(WINVER)
 
@@ -898,6 +898,54 @@ XDIFF_DEPS = \
 	xdiff/xtypes.h \
 	xdiff/xutils.h
 
+!ifndef WASM
+! if "$(FEATURES)"=="HUGE"
+WASM = yes
+! else
+WASM = no
+! endif
+!endif
+
+!if "$(WASM)" == "yes"
+WASM_DEFS = -DWASM
+WASM_OBJ = \
+	$(OBJDIR)/wasm.o \
+	$(OBJDIR)/m3_api_libc.o \
+	$(OBJDIR)/m3_api_meta_wasi.o \
+	$(OBJDIR)/m3_api_tracer.o \
+	$(OBJDIR)/m3_api_wasi.o \
+	$(OBJDIR)/m3_bind.o \
+	$(OBJDIR)/m3_code.o \
+	$(OBJDIR)/m3_compile.o \
+	$(OBJDIR)/m3_core.o \
+	$(OBJDIR)/m3_emit.o \
+	$(OBJDIR)/m3_env.o \
+	$(OBJDIR)/m3_exec.o \
+	$(OBJDIR)/m3_info.o \
+	$(OBJDIR)/m3_module.o \
+	$(OBJDIR)/m3_optimize.o \
+	$(OBJDIR)/m3_parse.o
+WASM_DEPS = \
+	wasm3/source/m3.h \
+	wasm3/source/m3_api_defs.h \
+	wasm3/source/m3_api_libc.h \
+	wasm3/source/m3_api_tracer.h \
+	wasm3/source/m3_api_wasi.h \
+	wasm3/source/m3_bind.h \
+	wasm3/source/m3_code.h \
+	wasm3/source/m3_compile.h \
+	wasm3/source/m3_config.h \
+	wasm3/source/m3_config_platforms.h \
+	wasm3/source/m3_core.h \
+	wasm3/source/m3_emit.h \
+	wasm3/source/m3_env.h \
+	wasm3/source/m3_exception.h \
+	wasm3/source/m3_exec.h \
+	wasm3/source/m3_exec_defs.h \
+	wasm3/source/m3_info.h \
+	wasm3/source/m3_math_utils.h \
+	wasm3/source/wasm3.h
+!endif
 
 !if "$(SUBSYSTEM_VER)" != ""
 SUBSYSTEM = $(SUBSYSTEM),$(SUBSYSTEM_VER)
@@ -1320,13 +1368,13 @@ all:	$(MAIN_TARGET) \
 
 !if "$(VIMDLL)" == "yes"
 
-$(VIMDLLBASE).dll: $(OUTDIR) $(OBJ) $(XDIFF_OBJ) $(GUI_OBJ) $(CUI_OBJ) $(OLE_OBJ) $(OLE_IDL) $(MZSCHEME_OBJ) \
+$(VIMDLLBASE).dll: $(OUTDIR) $(OBJ) $(XDIFF_OBJ) $(WASM_OBJ) $(GUI_OBJ) $(CUI_OBJ) $(OLE_OBJ) $(OLE_IDL) $(MZSCHEME_OBJ) \
 		$(LUA_OBJ) $(PERL_OBJ) $(PYTHON_OBJ) $(PYTHON3_OBJ) $(RUBY_OBJ) $(TCL_OBJ) \
 		$(TERM_OBJ) $(SOUND_OBJ) $(NETBEANS_OBJ) $(CHANNEL_OBJ) $(XPM_OBJ) \
 		version.c version.h
 	$(CC) $(CFLAGS_OUTDIR) version.c
 	$(link) @<<
-$(LINKARGS1) /dll -out:$(VIMDLLBASE).dll $(OBJ) $(XDIFF_OBJ) $(GUI_OBJ) $(CUI_OBJ) $(OLE_OBJ)
+$(LINKARGS1) /dll -out:$(VIMDLLBASE).dll $(OBJ) $(XDIFF_OBJ) $(WASM_OBJ) $(GUI_OBJ) $(CUI_OBJ) $(OLE_OBJ)
 $(LUA_OBJ) $(MZSCHEME_OBJ) $(PERL_OBJ) $(PYTHON_OBJ) $(PYTHON3_OBJ) $(RUBY_OBJ)
 $(TCL_OBJ) $(TERM_OBJ) $(SOUND_OBJ) $(NETBEANS_OBJ) $(CHANNEL_OBJ)
 $(XPM_OBJ) $(OUTDIR)\version.obj $(LINKARGS2)
@@ -1342,13 +1390,13 @@ $(VIM).exe: $(OUTDIR) $(EXEOBJC) $(VIMDLLBASE).dll
 
 !else
 
-$(VIM).exe: $(OUTDIR) $(OBJ) $(XDIFF_OBJ) $(GUI_OBJ) $(CUI_OBJ) $(OLE_OBJ) $(OLE_IDL) $(MZSCHEME_OBJ) \
+$(VIM).exe: $(OUTDIR) $(OBJ) $(XDIFF_OBJ) $(WASM_OBJ) $(GUI_OBJ) $(CUI_OBJ) $(OLE_OBJ) $(OLE_IDL) $(MZSCHEME_OBJ) \
 		$(LUA_OBJ) $(PERL_OBJ) $(PYTHON_OBJ) $(PYTHON3_OBJ) $(RUBY_OBJ) $(TCL_OBJ) \
 		$(TERM_OBJ) $(SOUND_OBJ) $(NETBEANS_OBJ) $(CHANNEL_OBJ) $(XPM_OBJ) \
 		version.c version.h
 	$(CC) $(CFLAGS_OUTDIR) version.c
 	$(link) @<<
-$(LINKARGS1) /subsystem:$(SUBSYSTEM) -out:$(VIM).exe $(OBJ) $(XDIFF_OBJ) $(GUI_OBJ) $(CUI_OBJ) $(OLE_OBJ)
+$(LINKARGS1) /subsystem:$(SUBSYSTEM) -out:$(VIM).exe $(OBJ) $(XDIFF_OBJ) $(WASM_OBJ) $(GUI_OBJ) $(CUI_OBJ) $(OLE_OBJ)
 $(LUA_OBJ) $(MZSCHEME_OBJ) $(PERL_OBJ) $(PYTHON_OBJ) $(PYTHON3_OBJ) $(RUBY_OBJ)
 $(TCL_OBJ) $(TERM_OBJ) $(SOUND_OBJ) $(NETBEANS_OBJ) $(CHANNEL_OBJ)
 $(XPM_OBJ) $(OUTDIR)\version.obj $(LINKARGS2)
@@ -1539,6 +1587,56 @@ $(OUTDIR)/xutils.obj:	$(OUTDIR) xdiff/xutils.c  $(XDIFF_DEPS)
 $(OUTDIR)/xhistogram.obj:	$(OUTDIR) xdiff/xhistogram.c  $(XDIFF_DEPS)
 
 $(OUTDIR)/xpatience.obj:	$(OUTDIR) xdiff/xpatience.c  $(XDIFF_DEPS)
+
+CCCWASM = $(CC) $(CFLAGS) -Iwasm3/source
+
+$(OUTDIR)/wasm.o: $(OUTDIR) wasm.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm.c
+
+$(OUTDIR)/m3_api_libc.o: $(OUTDIR) wasm3/source/m3_api_libc.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_api_libc.c
+
+$(OUTDIR)/m3_api_meta_wasi.o: $(OUTDIR) wasm3/source/m3_api_meta_wasi.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_api_meta_wasi.c
+
+$(OUTDIR)/m3_api_tracer.o: $(OUTDIR) wasm3/source/m3_api_tracer.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_api_tracer.c
+
+$(OUTDIR)/m3_api_wasi.o: $(OUTDIR) wasm3/source/m3_api_wasi.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_api_wasi.c
+
+$(OUTDIR)/m3_bind.o: $(OUTDIR) wasm3/source/m3_bind.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_bind.c
+
+$(OUTDIR)/m3_code.o: $(OUTDIR) wasm3/source/m3_code.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_code.c
+
+$(OUTDIR)/m3_compile.o: $(OUTDIR) wasm3/source/m3_compile.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_compile.c
+
+$(OUTDIR)/m3_core.o: $(OUTDIR) wasm3/source/m3_core.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_core.c
+
+$(OUTDIR)/m3_emit.o: $(OUTDIR) wasm3/source/m3_emit.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_emit.c
+
+$(OUTDIR)/m3_env.o: $(OUTDIR) wasm3/source/m3_env.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_env.c
+
+$(OUTDIR)/m3_exec.o: $(OUTDIR) wasm3/source/m3_exec.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_exec.c
+
+$(OUTDIR)/m3_info.o: $(OUTDIR) wasm3/source/m3_info.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_info.c
+
+$(OUTDIR)/m3_module.o: $(OUTDIR) wasm3/source/m3_module.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_module.c
+
+$(OUTDIR)/m3_optimize.o: $(OUTDIR) wasm3/source/m3_optimize.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_optimize.c
+
+$(OUTDIR)/m3_parse.o: $(OUTDIR) wasm3/source/m3_parse.c $(WASM_DEPS)
+	$(CCCWASM) /Fo$@ wasm3/source/m3_parse.c
 
 $(OUTDIR)/digraph.obj:	$(OUTDIR) digraph.c  $(INCL)
 
@@ -1941,6 +2039,7 @@ proto.h: \
 	proto/vim9execute.pro \
 	proto/vim9script.pro \
 	proto/viminfo.pro \
+	proto/wasm.pro \
 	proto/window.pro \
 	$(SOUND_PRO) \
 	$(NETBEANS_PRO) \
