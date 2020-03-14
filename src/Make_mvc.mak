@@ -471,6 +471,55 @@ CHANNEL_DEFS	= -DFEAT_JOB_CHANNEL
 NETBEANS_LIB	= WSock32.lib
 !endif
 
+!ifndef WASM
+! if "$(FEATURES)"=="HUGE"
+WASM = yes
+! else
+WASM = no
+! endif
+!endif
+
+!if "$(WASM)" == "yes"
+WASM_DEFS = -DWASM
+WASM_OBJ = \
+	$(OBJDIR)/wasm.o \
+	$(OBJDIR)/m3_api_libc.o \
+	$(OBJDIR)/m3_api_meta_wasi.o \
+	$(OBJDIR)/m3_api_tracer.o \
+	$(OBJDIR)/m3_api_wasi.o \
+	$(OBJDIR)/m3_bind.o \
+	$(OBJDIR)/m3_code.o \
+	$(OBJDIR)/m3_compile.o \
+	$(OBJDIR)/m3_core.o \
+	$(OBJDIR)/m3_emit.o \
+	$(OBJDIR)/m3_env.o \
+	$(OBJDIR)/m3_exec.o \
+	$(OBJDIR)/m3_info.o \
+	$(OBJDIR)/m3_module.o \
+	$(OBJDIR)/m3_optimize.o \
+	$(OBJDIR)/m3_parse.o
+WASM_DEPS = \
+	wasm3/source/m3.h \
+	wasm3/source/m3_api_defs.h \
+	wasm3/source/m3_api_libc.h \
+	wasm3/source/m3_api_tracer.h \
+	wasm3/source/m3_api_wasi.h \
+	wasm3/source/m3_bind.h \
+	wasm3/source/m3_code.h \
+	wasm3/source/m3_compile.h \
+	wasm3/source/m3_config.h \
+	wasm3/source/m3_config_platforms.h \
+	wasm3/source/m3_core.h \
+	wasm3/source/m3_emit.h \
+	wasm3/source/m3_env.h \
+	wasm3/source/m3_exception.h \
+	wasm3/source/m3_exec.h \
+	wasm3/source/m3_exec_defs.h \
+	wasm3/source/m3_info.h \
+	wasm3/source/m3_math_utils.h \
+	wasm3/source/wasm3.h
+!endif
+
 # Set which version of the CRT to use
 !if defined(USE_MSVCRT)
 # CVARS = $(cvarsdll)
@@ -898,54 +947,6 @@ XDIFF_DEPS = \
 	xdiff/xtypes.h \
 	xdiff/xutils.h
 
-!ifndef WASM
-! if "$(FEATURES)"=="HUGE"
-WASM = yes
-! else
-WASM = no
-! endif
-!endif
-
-!if "$(WASM)" == "yes"
-WASM_DEFS = -DWASM
-WASM_OBJ = \
-	$(OBJDIR)/wasm.o \
-	$(OBJDIR)/m3_api_libc.o \
-	$(OBJDIR)/m3_api_meta_wasi.o \
-	$(OBJDIR)/m3_api_tracer.o \
-	$(OBJDIR)/m3_api_wasi.o \
-	$(OBJDIR)/m3_bind.o \
-	$(OBJDIR)/m3_code.o \
-	$(OBJDIR)/m3_compile.o \
-	$(OBJDIR)/m3_core.o \
-	$(OBJDIR)/m3_emit.o \
-	$(OBJDIR)/m3_env.o \
-	$(OBJDIR)/m3_exec.o \
-	$(OBJDIR)/m3_info.o \
-	$(OBJDIR)/m3_module.o \
-	$(OBJDIR)/m3_optimize.o \
-	$(OBJDIR)/m3_parse.o
-WASM_DEPS = \
-	wasm3/source/m3.h \
-	wasm3/source/m3_api_defs.h \
-	wasm3/source/m3_api_libc.h \
-	wasm3/source/m3_api_tracer.h \
-	wasm3/source/m3_api_wasi.h \
-	wasm3/source/m3_bind.h \
-	wasm3/source/m3_code.h \
-	wasm3/source/m3_compile.h \
-	wasm3/source/m3_config.h \
-	wasm3/source/m3_config_platforms.h \
-	wasm3/source/m3_core.h \
-	wasm3/source/m3_emit.h \
-	wasm3/source/m3_env.h \
-	wasm3/source/m3_exception.h \
-	wasm3/source/m3_exec.h \
-	wasm3/source/m3_exec_defs.h \
-	wasm3/source/m3_info.h \
-	wasm3/source/m3_math_utils.h \
-	wasm3/source/wasm3.h
-!endif
 
 !if "$(SUBSYSTEM_VER)" != ""
 SUBSYSTEM = $(SUBSYSTEM),$(SUBSYSTEM_VER)
