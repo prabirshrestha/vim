@@ -19,22 +19,12 @@
 static IM3Environment wasm_get_environment();
 static IM3Runtime wasm_get_runtime();
 
-unsigned char fib32_wasm[] = {
-  0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x06, 0x01, 0x60,
-  0x01, 0x7f, 0x01, 0x7f, 0x03, 0x02, 0x01, 0x00, 0x07, 0x07, 0x01, 0x03,
-  0x66, 0x69, 0x62, 0x00, 0x00, 0x0a, 0x1f, 0x01, 0x1d, 0x00, 0x20, 0x00,
-  0x41, 0x02, 0x49, 0x04, 0x40, 0x20, 0x00, 0x0f, 0x0b, 0x20, 0x00, 0x41,
-  0x02, 0x6b, 0x10, 0x00, 0x20, 0x00, 0x41, 0x01, 0x6b, 0x10, 0x00, 0x6a,
-  0x0f, 0x0b
-};
-unsigned int fib32_wasm_len = 62;
-
 /*
-   let b = readfile('fib.wasm', 'B')
-   let m = wasm_module_load(b)
-   let f = wasm_func_get(m, 'fib')
-   let result = wasm_func_call(f, ["10"])
-   echom result
+ * usage:
+ *
+ *	let blob = readfile('./fib.wasm', 'B')
+ *	let module = wasm_load(blob)
+ *
 */
 
 static IM3Environment
@@ -67,12 +57,20 @@ wasm_get_runtime() {
 }
 
 void
-f_wasmeval(typval_T *argvars, typval_T *rettv)
+f_wasm_load(typval_T *argvars, typval_T *rettv)
 {
+    blob_T *blob = NULL;
     M3Result result = m3Err_none;
 
-    uint8_t* wasm = (uint8_t*)fib32_wasm;
-    size_t fsize = fib32_wasm_len-1;
+    if (argvars[0].v_type == VAR_BLOB)
+    {
+	blob = argvars[0].vval.v_blob;
+	if (blob == NULL)
+	    return;
+    }
+
+    void* wasm = blob->bv_ga.ga_data;
+    size_t fsize = blob->bv_ga.ga_len - 1;
 
     IM3Environment environment = wasm_get_environment();
     if (environment == NULL) {
@@ -86,7 +84,13 @@ f_wasmeval(typval_T *argvars, typval_T *rettv)
 
     IM3Module module;
     result = m3_ParseModule(environment, &module, wasm, fsize);
+    if (result) {
+	return;
+    }
     result = m3_LoadModule(runtime, module);
+    if (result) {
+	return;
+    }
 
     IM3Function f;
     result = m3_FindFunction(&f, runtime, "fib");
@@ -95,10 +99,6 @@ f_wasmeval(typval_T *argvars, typval_T *rettv)
     result = m3_CallWithArgs(f, 1, i_argv);
 
     long value = *(uint64_t*)(runtime->stack);
-
-    semsg("wasm: %ld", value);
-
-    return;
 }
 
 #endif
