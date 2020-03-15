@@ -16,6 +16,9 @@
 #include "m3_api_tracer.h"
 #include "m3_env.h"
 
+static IM3Environment wasm_get_environment();
+static IM3Runtime wasm_get_runtime();
+
 unsigned char fib32_wasm[] = {
   0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x06, 0x01, 0x60,
   0x01, 0x7f, 0x01, 0x7f, 0x03, 0x02, 0x01, 0x00, 0x07, 0x07, 0x01, 0x03,
@@ -26,6 +29,43 @@ unsigned char fib32_wasm[] = {
 };
 unsigned int fib32_wasm_len = 62;
 
+/*
+   let b = readfile('fib.wasm', 'B')
+   let m = wasm_module_load(b)
+   let f = wasm_func_get(m, 'fib')
+   let result = wasm_func_call(f, ["10"])
+   echom result
+*/
+
+static IM3Environment
+wasm_get_environment() {
+    static IM3Environment environment = NULL;
+
+    if (environment == NULL) {
+	environment = m3_NewEnvironment();
+	if (environment == NULL) {
+	    semsg("Failed to create WASM environment");
+	}
+    }
+
+    return environment;
+}
+
+static IM3Runtime
+wasm_get_runtime() {
+    static IM3Runtime runtime = NULL;
+    IM3Environment environment = wasm_get_environment();
+
+    if (environment != NULL && runtime == NULL) {
+	runtime = m3_NewRuntime(environment, 64 * 1024, NULL);
+	if (runtime == NULL) {
+	    semsg("Failed to create WASM runtime");
+	}
+    }
+
+    return runtime;
+}
+
 void
 f_wasmeval(typval_T *argvars, typval_T *rettv)
 {
@@ -34,11 +74,18 @@ f_wasmeval(typval_T *argvars, typval_T *rettv)
     uint8_t* wasm = (uint8_t*)fib32_wasm;
     size_t fsize = fib32_wasm_len-1;
 
-    IM3Environment env = m3_NewEnvironment();
-    IM3Runtime runtime = m3_NewRuntime(env, 8192, NULL);
+    IM3Environment environment = wasm_get_environment();
+    if (environment == NULL) {
+	return;
+    }
+
+    IM3Runtime runtime = wasm_get_runtime();
+    if (runtime == NULL) {
+	return;
+    }
 
     IM3Module module;
-    result = m3_ParseModule(env, &module, wasm, fsize);
+    result = m3_ParseModule(environment, &module, wasm, fsize);
     result = m3_LoadModule(runtime, module);
 
     IM3Function f;
