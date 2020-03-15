@@ -97,8 +97,15 @@ f_wasm_load(typval_T *argvars, typval_T *rettv)
 
     const char* i_argv[2] = { "10", NULL };
     result = m3_CallWithArgs(f, 1, i_argv);
+    if (result) {
+	return;
+    }
+
+    // TODO: should return module instead
 
     long value = *(uint64_t*)(runtime->stack);
+
+    rettv->vval.v_number = value;
 }
 
 #endif
