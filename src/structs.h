@@ -1534,6 +1534,8 @@ typedef struct funccall_S funccall_T;
 # define UF_NOT_COMPILED -2
 # define UF_TO_BE_COMPILED -1
 
+typedef void (*cfunc_T)(int argcount, typval_T *argvars, typval_T *rettv, void *state);
+
 /*
  * Structure to hold info for a user function.
  */
@@ -1556,6 +1558,8 @@ typedef struct
     char_u	*uf_va_name;	// name from "...name" or NULL
     type_T	*uf_va_type;	// type from "...name: type" or NULL
     type_T	*uf_func_type;	// type of the function, &t_func_any if unknown
+    cfunc_T     uf_cb;		// callback function for cfunc
+    void        *uf_cb_state;   // state of uf_cb
 
     garray_T	uf_lines;	// function lines
 # ifdef FEAT_PROFILE
@@ -1587,6 +1591,10 @@ typedef struct
     char_u	uf_name[1];	// name of function (actually longer); can
 				// start with <SNR>123_ (<SNR> is K_SPECIAL
 				// KS_EXTRA KE_SNR)
+    /* void (*cb)(void); */
+    
+    /* void (*cb)(typval_T *argvars, typval_T *rettv, void *state); */
+    /* void *state; */
 } ufunc_T;
 
 // flags used in uf_flags
