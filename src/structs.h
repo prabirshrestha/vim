@@ -1527,15 +1527,15 @@ struct blobvar_S
     char	bv_lock;	// zero, VAR_LOCKED, VAR_FIXED
 };
 
+typedef void (*cfunc_T)(int argcount, typval_T *argvars, typval_T *rettv, void *state);
+typedef void (*cfunc_free_T)(void *state);
+
 #if defined(FEAT_EVAL) || defined(PROTO)
 typedef struct funccall_S funccall_T;
 
 // values used for "uf_dfunc_idx"
 # define UF_NOT_COMPILED -2
 # define UF_TO_BE_COMPILED -1
-
-typedef void (*cfunc_T)(int argcount, typval_T *argvars, typval_T *rettv, void *state);
-typedef void (*cfunc_free_T)(void *state);
 
 /*
  * Structure to hold info for a user function.
